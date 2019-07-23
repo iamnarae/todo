@@ -1,29 +1,54 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Header></Header>
+    <Field v-on:add="addList"></Field>
+    <List :propsdata="todoItems" v-on:remove="removeList"></List>
+    <Footer v-on:removeAll="clearAll"></Footer>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+import header from './components/header.vue'
+import field from './components/field.vue'
+import list from './components/list.vue'
+import footer from './components/footer.vue'
+
+export default {
+  data() {
+    return {
+      todoItems: []
     }
-  }
+  },
+  components: {
+    'Header': header,
+    'Field': field,
+    'List': list,
+    'Footer': footer
+  },  
+  created() {
+      if(localStorage.length > 0){
+          for (var i=0; i<localStorage.length; i++){
+            this.todoItems.push(localStorage.key(i))
+          }
+      }
+  },
+  methods: {
+        addList(todoItem) {
+          localStorage.setItem(todoItem, todoItem);
+          this.todoItems.push(todoItem);
+        },
+        removeList(todoItem, index) {
+            localStorage.removeItem(todoItem);
+            this.todoItems.splice(index, 1);
+        },
+        clearAll(){
+          localStorage.clear();
+          this.todoItems = [];
+        }
+    }
 }
+</script>
+<style lang="scss">
+body {background:#dadada;}
+* {padding:0; margin:0; box-sizing:border-box;}
 </style>
